@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #ffffff;
+  --color-foreground: #161616;
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root {
+  --cds-background: #ffffff;
+  --cds-text-primary: #161616;
+  --cds-text-secondary: #525252;
+  --cds-text-placeholder: #6f6f6f;
+  --cds-link-primary: #0f62fe;
+  --cds-link-primary-hover: #0043ce;
+  --cds-button-primary: #0f62fe;
+  --cds-button-primary-hover: #0353e9;
+  --cds-button-primary-active: #002d9c;
+  --cds-layer-01: #f4f4f4;
+  --cds-layer-hover-01: #e8e8e8;
+  --cds-border-subtle: #c6c6c6;
+  --cds-focus: #0f62fe;
+  --cds-support-error: #da1e28;
+  --cds-support-success: #24a148;
+}
+
+body {
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--cds-text-primary);
+  background: var(--cds-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c6c6c6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8d8d8d;
+}
+
+/* 移除浏览器默认聚焦高亮 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+/* 大纲导航跳转时的聚焦高亮微动效 */
+@keyframes outline-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(15, 98, 254, 0.45);
+    border-color: #0f62fe;
+  }
+  40% {
+    box-shadow: 0 0 0 5px rgba(15, 98, 254, 0.25);
+    border-color: #0f62fe;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(15, 98, 254, 0);
+  }
+}
+
+.outline-highlight-target {
+  animation: outline-pulse 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+  scroll-margin-top: 90px;
+}

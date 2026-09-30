@@ -1,0 +1,52 @@
+[
+  {
+    "id": "report-demo-001",
+    "member_id": "member-001",
+    "member_name": "张伟",
+    "week_start": "2026-09-28",
+    "items": [
+      {
+        "id": "item-demo-01",
+        "category": "产品研发",
+        "title": "完成用户工作台首屏性能优化与大纲导航组件重构",
+        "description": "1. 引入虚拟滚动技术，使得千条级数据列表渲染耗时由 120ms 降至 16ms；\n2. 落地右侧大纲导航锚点联动效果，提升长文档浏览流畅度。",
+        "status": "completed"
+      },
+      {
+        "id": "item-demo-02",
+        "category": "产品优化",
+        "title": "支持 Word/Excel 多格式数据一键纯前端无损导出",
+        "description": "修复了长文本表格单元格跨页截断的问题，自适应宽度并优化公文标题层级排版。",
+        "status": "completed"
+      }
+    ],
+    "next_plan": "1. 推进周报编辑页离线草稿自动暂存机制；\n2. 配合后端完成高并发排队写入压力测试与端到端链路验证。",
+    "created_at": "2026-09-28T10:00:00.000Z",
+    "updated_at": "2026-09-28T18:00:00.000Z"
+  },
+  {
+    "id": "report-demo-002",
+    "member_id": "member-002",
+    "member_name": "李娜",
+    "week_start": "2026-09-28",
+    "items": [
+      {
+        "id": "item-demo-03",
+        "category": "产品研发",
+        "title": "重构底层数据落盘引擎，实现原子化文件写入与排队写锁",
+        "description": "1. 基于系统内核 renameSync 实现原子写盘，杜绝异常断电或服务中断导致的文件损坏；\n2. 为核心数据存储引入互斥队列锁机制，彻底消除多人周五高并发提交时的竞态冲刷隐患。",
+        "status": "completed"
+      },
+      {
+        "id": "item-demo-04",
+        "category": "运维交付",
+        "title": "生产服务长连接保活与 SSE 流式心跳机制落地",
+        "description": "完成与外部 AI 工作流的长连接通信改造，建立 15 秒心跳保活监听，有效防止网关超时断流。",
+        "status": "completed"
+      }
+    ],
+    "next_plan": "1. 优化系统启动排查逻辑，实现端口被占自愈释放；\n2. 编写轻量化容器 Dockerfile 支持一键部署。",
+    "created_at": "2026-09-28T10:30:00.000Z",
+    "updated_at": "2026-09-28T18:30:00.000Z"
+  }
+]

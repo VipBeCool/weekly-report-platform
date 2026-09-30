@@ -1,0 +1,214 @@
+app:
+  description: 严格对标管理层汇报规范、完全由周报数据动态驱动聚类提炼的部门月报工作流（杜绝死板套用与AI虚构）
+  icon: 📄
+  icon_background: '#E0EAFF'
+  mode: workflow
+  name: 部门月报智能提炼工作流
+kind: app
+version: 0.1.5
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions: []
+      allowed_file_types: []
+      allowed_file_upload_methods: []
+      enabled: false
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+    opening_statement: ''
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+      - data:
+          isInIteration: false
+          sourceType: start
+          targetType: code
+        id: start-source-code-target
+        source: '1710000000001'
+        sourcePort: source
+        target: '1710000000002'
+        targetPort: target
+        type: custom
+      - data:
+          isInIteration: false
+          sourceType: code
+          targetType: llm
+        id: code-source-llm-target
+        source: '1710000000002'
+        sourcePort: source
+        target: '1710000000003'
+        targetPort: target
+        type: custom
+      - data:
+          isInIteration: false
+          sourceType: llm
+          targetType: end
+        id: llm-source-end-target
+        source: '1710000000003'
+        sourcePort: source
+        target: '1710000000004'
+        targetPort: target
+        type: custom
+    nodes:
+      - data:
+          desc: 接收前端周报系统传参（月份、标题、周期、聚合周报文本、补充指令）
+          selected: false
+          title: 开始
+          type: start
+          variables:
+            - label: 目标月份
+              max_length: 10
+              options: []
+              required: true
+              type: number
+              variable: month
+            - label: 月报标题
+              max_length: 200
+              options: []
+              required: true
+              type: text-input
+              variable: title
+            - label: 统计周期
+              max_length: 200
+              options: []
+              required: true
+              type: text-input
+              variable: cycle_name
+            - label: 周报明细数据
+              max_length: 100000
+              options: []
+              required: true
+              type: paragraph
+              variable: weekly_data
+            - label: 补充提炼要求
+              max_length: 50000
+              options: []
+              required: false
+              type: paragraph
+              variable: extra_prompt
+        height: 141
+        id: '1710000000001'
+        position:
+          x: 80
+          y: 280
+        positionAbsolute:
+          x: 80
+          y: 280
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+      - data:
+          code: "def main(raw_data: str, month: int) -> dict:\n    lines = raw_data.strip().split('\\n')\n    cleaned = [l.strip() for l in lines if l.strip()]\n    try:\n        m = int(month)\n        next_m = (m % 12) + 1\n    except Exception:\n        next_m = 10\n    return {\n        \"cleaned_data\": '\\n'.join(cleaned),\n        \"item_count\": len(cleaned),\n        \"next_month\": next_m\n    }\n"
+          code_language: python3
+          desc: 清洗文本空行并自动推导下月月份
+          outputs:
+            cleaned_data:
+              type: string
+            item_count:
+              type: number
+            next_month:
+              type: number
+          selected: false
+          title: 数据预处理与月份推算
+          type: code
+          variables:
+            - value_selector:
+                - '1710000000001'
+                - weekly_data
+              variable: raw_data
+            - value_selector:
+                - '1710000000001'
+                - month
+              variable: month
+        height: 54
+        id: '1710000000002'
+        position:
+          x: 380
+          y: 280
+        positionAbsolute:
+          x: 380
+          y: 280
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+      - data:
+          context:
+            enabled: false
+            variable_selector: []
+          desc: 基于当月周报数据动态聚类提炼，杜绝固定模板僵化套用与AI虚构
+          model:
+            completion_params:
+              temperature: 0.2
+            mode: chat
+            name: deepseek-chat
+            provider: deepseek
+          prompt_template:
+            - role: system
+              text: "你是一名优秀的企业【产品与技术研发部门】的高级运营专家兼部门月报主笔。\n你的唯一任务是：基于用户选择的当月各周真实周报明细，提炼编写格式高度严谨、语言完全真人化、事实严谨可考的正式部门月报。\n\n【核心设计原则：框架稳定，内容与小标题全动态数据驱动】\n1. 宏观骨架稳定：一级标题（一、二、三、四）与二级大分类（（一）产品创新、（二）产品优化、（三）交付服务、（四）综合工作，以及第四部分规划分类）是部门统一固化的汇报容器大纲。\n2. 各板块底下的三级小标题与具体点必须完全由周报动态提炼：\n   - 绝不可机械照抄某个固定月份的具体项目（严禁把任何范例当成死板模板）。\n   - 必须实事求是：根据当前输入的周报里实际发生的项目、任务和进展，由你自动聚类，动态提炼出高度概括的小标题（格式：`序号.【动态提炼的成果主旨句】。具体业务事实...`）。\n   - 如果周报中当月重点在做“区块链”或“政企数据治理”，小标题就动态生成为对应内容；如果当月没有模型开发，就绝不生成“模型开发验证”这一条。\n\n【最高行为准则：彻底摒弃 AI 腔调，严禁任何形式的捏造与臆想】\n1. 语言去 AI 化（负面约束）：\n   - 严禁出现以下大模型高频八股套话：“在...的大背景下”、“赋能”、“深耕”、“协同发力”、“齐心协力”、“砥砺前行”、“迈向新台阶”、“谱写新篇章”、“如火如荼”、“成果斐然”等。\n   - 严禁无意义的空泛抒情、主观夸赞与泛泛而谈。\n   - 必须使用严肃、客观、紧凑、严谨的管理层公文汇报风格。多用“完成...”、“推进...”、“上线...”、“优化...”、“开展...”、“对接...”等动宾结构短句。\n2. 绝对真实，严禁臆想（反幻觉约束）：\n   - 报告中的每一个项目名称、客户机构名称、系统模块、具体数据（如企业户数、接口数等）必须 100% 严格来自周报输入，不得自行推测、杜撰未在周报中出现的任何客户名或业绩！\n   - 周报中写了什么就提炼什么。若周报中未提及某方面成果（例如某月无综合合规事项或无售前事项），宁缺毋滥，合理省略或合并，切勿虚构！\n   - “需支持事项”必须严格基于周报中标记为阻塞（blocked）或明确提到需要外部协调的问题。若周报中无此类问题，直接写“无。”，严禁为了显得有内容而凭空捏造困难！\n\n【数据真实与严禁占位符约束】\n- 严禁在输出正文中出现“XX”、“某某”、“[占位符]”等任何未填占位符（如“XX家”、“XX批次”等严禁出现！若未统计总数则直接陈述具体事实与机构名称）！\n\n【语言风格与句式节奏示范】\n- 概述句式：X月，部门围绕产品创新迭代与市场化项目落地，完成[核心成果1]、[核心成果2]上线；完成[成果3]优化和[成果4]场景接口开发对接；扎实推进产品迭代、接口对接与重点机构交付验证。\n- 研发与优化句式：序号.【动态提炼主题】。[项目A]完成[动作与成果]，[关键成效]；[项目B]推进[动作]，[现状]。\n- 交付句式：序号.【交付类别】。[客户A]完成[具体交付内容]；[客户B]推进[具体测试与对接]；[客户C]完成[批量查询户数/报告交付]；"
+            - role: user
+              text: "请严格根据以下提供的【真实周报明细数据】，生成符合标准规范的部门月报。\n\n【基本信息】\n- 目标月份：{{#1710000000001.month#}} 月\n- 月报标题：{{#1710000000001.title#}}\n- 统计周期：{{#1710000000001.cycle_name#}}\n- 下月月份：{{#1710000000002.next_month#}} 月\n- 用户补充要求：{{#1710000000001.extra_prompt#}}\n\n【各周周报真实明细数据】\n{{#1710000000002.cleaned_data#}}\n\n----------------------------------------\n【输出格式规范（大框架固定，各板块内的小标题与内容完全由当月周报动态提炼）】\n\n# {{#1710000000001.title#}}\n**统计周期**：{{#1710000000001.cycle_name#}}\n\n一、{{#1710000000001.month#}}月工作总结\n（必须高度浓缩为一段话：围绕本月核心业务主线，由你动态提炼本月实际落地的核心产品/系统、关键模型与接口、服务客户总数及交付/POC/售前概况，字数约150~250字，严禁抒情废话）\n\n二、产品研发及优化情况\n（按以下四大板块分类。注意：每个大板块内，必须根据本月周报数据的实际工作内容，自动归类聚类并提炼出 1~3 个动态小标题，格式为“序号.【动态提炼的成果主旨句】。具体业务事实...”。若某板块当月完全无周报数据，则简要一句话概括或如实跳过，切勿生搬硬套！）：\n\n（一）产品创新稳步推进\n（仔细分析本月周报中所有关于新产品研发、新智能体、新模型、新方案的事项，由你动态聚类提炼出 1~3 个具有针对性的小标题，例如“1.【某某产品/模型研发或优化】。具体进展与成效；”。严禁照抄范例文字，必须完全取材于当月周报数据）\n\n（二）产品优化全面落地\n（分析本月周报中的系统重构、架构升级、老功能迭代、多场景接口对接、后台配置等事项，动态提炼 1~2 个小标题，例如“1.【某某系统/平台优化与架构调整】。具体进展；2.【接口开发与配套功能完善】。具体进展；”）\n\n（三）交付服务质效稳步提升\n（分析本月周报中的所有对外部机构、银行、政企客户的服务事项，据实提炼小标题，通常包含：\n1.重点客户交付。（逐一列出本月周报涉及的全部真实客户，用分号连接）\n2.POC测试。（若本月有 POC 记录则列出机构与测试场景；若无则不写）\n3.售前方案支撑。（若本月有投标、售前演示、方案交流则列出；若无则不写））\n\n（四）综合工作有序开展\n（分析本月周报中的网络与数据安全、合规培训、招投标材料、部门综合事务等，动态提炼 1~2 个小标题；若周报中无综合事务，直接简要写“常态化推进数据合规与日常综合事务保障。”）\n\n三、需支持事项\n（严格审查本月周报中是否存在标记为阻塞、受阻、依赖外部接口/名单未到位的事项。若存在，客观条列需协调的问题；若周报中全员推进顺利、无阻塞记录，则直接输出“无。”）\n\n四、{{#1710000000002.next_month#}}月工作计划\n（根据周报中各成员的下周计划/下月规划客观提炼，按以下三个维度归纳）：\n（一）产品研发与平台迭代（提取下月计划研发上线的功能与模型）\n（二）重点项目交付与推进（提取下月计划交付的客户、接口迁移、投标项目）\n（三）合规安全管理（常态化安全自查、合规审计与制度建设）\n\n请直接输出符合上述要求的 Markdown 正文，严禁输出任何多余的引言、前缀解释或结束问候语！"
+          selected: false
+          title: LLM 智能月报深度提炼
+          type: llm
+          vision:
+            enabled: false
+        height: 98
+        id: '1710000000003'
+        position:
+          x: 680
+          y: 280
+        positionAbsolute:
+          x: 680
+          y: 280
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+      - data:
+          desc: 输出生成的 Markdown 月报文本
+          outputs:
+            - value_selector:
+                - '1710000000003'
+                - text
+              variable: result
+          selected: false
+          title: 结束
+          type: end
+        height: 90
+        id: '1710000000004'
+        position:
+          x: 980
+          y: 280
+        positionAbsolute:
+          x: 980
+          y: 280
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+    viewport:
+      x: 30
+      y: 100
+      zoom: 1

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "member-001",
+    "name": "张伟",
+    "role": "前端研发",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "member-002",
+    "name": "李娜",
+    "role": "后端研发",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka",
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "member-003",
+    "name": "王强",
+    "role": "产品经理",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jack",
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "member-004",
+    "name": "赵敏",
+    "role": "测试开发",
+    "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Zoe",
+    "created_at": "2026-01-01T00:00:00.000Z"
+  }
+]
