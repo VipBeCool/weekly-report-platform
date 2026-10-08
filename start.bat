@@ -8,12 +8,21 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3000 ^| findstr LISTENING') 
 taskkill /F /T /IM node.exe >nul 2>nul
 timeout /t 1 /nobreak >nul
 
-echo [1/3] Checking dependencies...
-call npm install --registry=https://registry.npmmirror.com
-echo.
-echo [2/3] Checking build...
-call npm run build
-echo.
+if not exist "node_modules\" (
+    echo [1/3] First run detected. Installing dependencies...
+    call npm install --registry=https://registry.npmmirror.com
+    echo.
+) else (
+    echo [1/3] Dependencies ready. Skipping npm install.
+)
+
+if not exist ".next\" (
+    echo [2/3] Building production bundle for the first time...
+    call npm run build
+    echo.
+) else (
+    echo [2/3] Production build ready. Skipping build.
+)
 echo ========================================================
 echo         Weekly Report Server is Starting!
 echo ========================================================
